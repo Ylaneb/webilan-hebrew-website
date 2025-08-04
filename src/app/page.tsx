@@ -1,6 +1,9 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 import { 
   Rocket, 
   Code, 
@@ -18,12 +21,65 @@ import {
   Mail,
   Cpu,
   Database,
-  Cloud
+  Cloud,
+  MessageCircle,
+  Phone,
+  MapPin,
+  Clock
 } from "lucide-react";
+import { useState } from "react";
+import ContactFormDialog, { ContactFormData } from "@/components/ContactFormDialog";
+import WhatsAppDialog from "@/components/WhatsAppDialog";
 
 export default function Home() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
+  const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState({ name: "", price: "" });
+  const [websiteDescription, setWebsiteDescription] = useState("");
+
+  const handleInputSubmit = () => {
+    if (websiteDescription.trim()) {
+      setIsDialogOpen(true);
+    }
+  };
+
+  const handleFormSubmit = (formData: ContactFormData) => {
+    // Here you would typically send the form data to your backend
+    console.log("Form submitted:", formData);
+    alert("תודה! נציג יצור איתך קשר בהקדם.");
+  };
+
+  const handleContactSubmit = async (formData: ContactFormData) => {
+    // Different handling for general contact form
+    console.log("Contact form submitted:", formData);
+    alert("תודה! נציג יצור איתך קשר בהקדם.");
+  };
+
   return (
     <div className="min-h-screen bg-white" dir="rtl">
+      {/* Contact Form Dialogs */}
+      <ContactFormDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        initialDescription={websiteDescription}
+        onSubmit={handleFormSubmit}
+      />
+      
+      <ContactFormDialog
+        isOpen={isContactDialogOpen}
+        onClose={() => setIsContactDialogOpen(false)}
+        title="צור קשר"
+        onSubmit={handleContactSubmit}
+      />
+      
+      <WhatsAppDialog
+        isOpen={isWhatsAppDialogOpen}
+        onClose={() => setIsWhatsAppDialogOpen(false)}
+        planName={selectedPlan.name}
+        planPrice={selectedPlan.price}
+      />
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="container mx-auto px-4 py-4">
@@ -37,13 +93,16 @@ export default function Home() {
               </span>
             </div>
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-slate-600 hover:text-blue-600 transition-colors">תכונות</a>
-              <a href="#templates" className="text-slate-600 hover:text-blue-600 transition-colors">תבניות</a>
-              <a href="#pricing" className="text-slate-600 hover:text-blue-600 transition-colors">מחירים</a>
-              <a href="#enterprise" className="text-slate-600 hover:text-blue-600 transition-colors">ארגונים</a>
+              <a href="#journey" className="text-slate-600 hover:text-blue-600 transition-colors">פרוייקטים</a>
+              <a href="#clients" className="text-slate-600 hover:text-blue-600 transition-colors">לקוחות</a>
+              <a href="#pricing" className="text-slate-600 hover:text-blue-600 transition-colors">מחירון</a>
             </div>
             <div className="flex items-center">
-              <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Button 
+                size="sm" 
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                onClick={() => setIsContactDialogOpen(true)}
+              >
                 <Rocket className="h-4 w-4 ml-2" />
                 התחל לבנות
               </Button>
@@ -57,35 +116,63 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto mb-16">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-slate-900 via-blue-600 to-purple-600 bg-clip-text text-transparent">
-              בנה את האתר החלומי שלך
+              נבנה לך אתר מקצועי
             </h1>
             <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-3xl mx-auto">
-              צור אתרים מקצועיים ומרשימים תוך דקות עם הפלטפורמה שלנו מבוססת בינה מלאכותית. 
-              אין צורך בקוד - פשוט תאר את החזון שלך וצפה בו מתממש.
+              צוות מקצועי של מפתחים ומעצבים יבנה לך אתר מודרני ומתקדם. 
+              מהרעיון ועד לאתר חי - אנחנו כאן בשבילך.
             </p>
             
             {/* AI Input Section */}
             <div className="max-w-2xl mx-auto mb-8">
               <div className="relative">
                 <Input 
-                  placeholder="תאר את רעיון האתר שלך..." 
+                  placeholder="תאר את האתר שאתה רוצה..." 
                   className="h-14 text-lg pr-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl"
+                  value={websiteDescription}
+                  onChange={(e) => setWebsiteDescription(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleInputSubmit()}
                 />
                 <Button 
                   size="sm" 
                   className="absolute left-2 top-2 h-10 w-10 p-0 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  onClick={handleInputSubmit}
                 >
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>
               <div className="flex flex-wrap justify-center gap-3 mt-4">
-                <Button variant="outline" size="sm" className="rounded-full">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full"
+                  onClick={() => {
+                    setWebsiteDescription("חנות אונליין");
+                    handleInputSubmit();
+                  }}
+                >
                   חנות אונליין
                 </Button>
-                <Button variant="outline" size="sm" className="rounded-full">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full"
+                  onClick={() => {
+                    setWebsiteDescription("אתר פורטפוליו");
+                    handleInputSubmit();
+                  }}
+                >
                   אתר פורטפוליו
                 </Button>
-                <Button variant="outline" size="sm" className="rounded-full">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full"
+                  onClick={() => {
+                    setWebsiteDescription("אתר עסקי");
+                    handleInputSubmit();
+                  }}
+                >
                   אתר עסקי
                 </Button>
               </div>
@@ -94,92 +181,179 @@ export default function Home() {
             {/* Social Proof */}
             <div className="flex items-center justify-center space-x-4 text-slate-600">
               <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full border-2 border-white"></div>
+                {[
+                  { 
+                    name: "דוד כהן", 
+                    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+                    fallback: "ד"
+                  },
+                  { 
+                    name: "שרה לוי", 
+                    photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
+                    fallback: "ש"
+                  },
+                  { 
+                    name: "מיכאל רוזן", 
+                    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+                    fallback: "מ"
+                  },
+                  { 
+                    name: "רחל גולדברג", 
+                    photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+                    fallback: "ר"
+                  }
+                ].map((person, i) => (
+                  <div 
+                    key={i} 
+                    className="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-gradient-to-r from-blue-400 to-purple-400 flex items-center justify-center text-white text-xs font-medium"
+                    title={person.name}
+                    data-person={person.name}
+        >
+          <Image
+                      src={person.photo} 
+                      alt={person.name}
+                      width={32}
+                      height={32}
+                      className="w-full h-full object-cover"
+                      onError={() => {
+                        const parent = document.querySelector(`[data-person="${person.name}"]`);
+                        if (parent) {
+                          parent.textContent = person.fallback;
+                        }
+                      }}
+                    />
+                  </div>
                 ))}
               </div>
-              <span className="text-sm">מעל 10,000 מפתחים סומכים עלינו</span>
+              <span className="text-sm">עשרות חברים סומכים עלינו</span>
             </div>
           </div>
 
           {/* Preview Cards */}
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
-              { title: "פורטפוליו מודרני", color: "from-blue-400 to-cyan-400" },
-              { title: "חנות אונליין", color: "from-purple-400 to-pink-400" },
-              { title: "אתר עסקי", color: "from-green-400 to-emerald-400" }
+              { 
+                title: "לוח בקרה מקצועי", 
+                description: "ניהול פרויקטים וניתוח נתונים מתקדם",
+                image: "/img/eden01shift.jpg",
+                category: "Dashboard"
+              },
+              { 
+                title: "טפסים חכמים", 
+                description: "מערכות ניהול וטפסים מתקדמים",
+                image: "/img/OR Harmony Next1.jpg",
+                category: "Forms"
+              },
+              { 
+                title: "אתר ארגוני", 
+                description: "פתרונות אינטרנט מתקדמים לעסקים",
+                image: "/img/01Webilan - פיתוח אתרים מודרני.jpg",
+                category: "Enterprise"
+              }
             ].map((card, index) => (
               <div key={index} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow p-6 border border-slate-200">
-                <div className={`w-full h-32 bg-gradient-to-r ${card.color} rounded-lg mb-4 flex items-center justify-center`}>
-                  <Globe className="h-8 w-8 text-white" />
+                <div className="w-full h-32 rounded-lg mb-4 overflow-hidden relative">
+          <Image
+                    src={card.image} 
+                    alt={card.title}
+                    width={400}
+                    height={200}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium text-slate-700">
+                    {card.category}
+                  </div>
                 </div>
                 <h3 className="font-semibold text-lg mb-2">{card.title}</h3>
-                <p className="text-slate-600 text-sm">תבנית מקצועית עם עיצוב מודרני</p>
+                <p className="text-slate-600 text-sm">{card.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
+      {/* Client Journey Section */}
+      <section id="journey" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">כל מה שצריך לבנות אתרים מדהימים</h2>
+            <h2 className="text-4xl font-bold mb-4">המסע שלנו יחד</h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              מדפי נחיתה פשוטים ועד אפליקציות מורכבות - אנחנו מכסים אותך עם כלים חזקים ועיצוב אינטואיטיבי.
+              מהרעיון הראשוני ועד לאתר חי - אנחנו הולכים איתך כל הדרך
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Sparkles,
-                title: "עיצוב מבוסס בינה מלאכותית",
-                description: "תאר את החזון שלך בשפה טבעית וצפה בבינה המלאכותית שלנו יוצרת אתרים יפים ופונקציונליים באופן מיידי.",
-                color: "blue"
-              },
-              {
-                icon: Palette,
-                title: "עורך גרירה ושחרור",
-                description: "התאם כל אלמנט עם העורך החזותי האינטואיטיבי שלנו. אין צורך בידע בקוד.",
-                color: "purple"
-              },
-              {
-                icon: Cpu,
-                title: "תכונות מתקדמות",
-                description: "חנויות אונליין, בלוגים, טפסים, אנליטיקס - כל מה שצריך לבנות נוכחות מקוונת מלאה.",
-                color: "green"
-              },
-              {
-                icon: Database,
-                title: "בק-אנד מובנה",
-                description: "הגדרת מסד נתונים אוטומטית, אימות משתמשים ויצירת API לאפליקציות שלך.",
-                color: "orange"
-              },
-              {
-                icon: Cloud,
-                title: "פריסה מיידית",
-                description: "פרוס את האתר שלך בלחיצה אחת. CDN גלובלי, תעודות SSL וזמינות של 99.9% כלולים.",
-                color: "cyan"
-              },
-              {
-                icon: Shield,
-                title: "אבטחה ארגונית",
-                description: "אבטחה ברמת בנק עם גיבויים אוטומטיים, הגנה מפני DDoS ותעודות תאימות.",
-                color: "red"
-              }
-            ].map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <CardHeader>
-                  <div className={`w-12 h-12 bg-${feature.color}-100 dark:bg-${feature.color}-900/20 rounded-lg flex items-center justify-center mb-4`}>
-                    <feature.icon className={`h-6 w-6 text-${feature.color}-600`} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+            {/* Connection Lines - Better positioning */}
+            <div className="hidden lg:block absolute inset-0 pointer-events-none">
+              {/* Horizontal lines between cards */}
+              <div className="absolute top-[15%] left-[calc(33.33%-1rem)] right-[calc(33.33%-1rem)] h-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></div>
+              <div className="absolute top-[15%] left-[calc(66.67%-1rem)] right-[calc(16.67%-1rem)] h-1 bg-gradient-to-r from-purple-600 to-green-600 rounded-full"></div>
+              
+              <div className="absolute top-[85%] left-[calc(33.33%-1rem)] right-[calc(33.33%-1rem)] h-1 bg-gradient-to-r from-green-600 to-orange-600 rounded-full"></div>
+              <div className="absolute top-[85%] left-[calc(66.67%-1rem)] right-[calc(16.67%-1rem)] h-1 bg-gradient-to-r from-orange-600 to-cyan-600 rounded-full"></div>
+              
+              {/* Vertical lines connecting rows */}
+              <div className="absolute top-[50%] left-[calc(16.67%-0.5rem)] w-1 h-[35%] bg-gradient-to-b from-purple-600 to-green-600 rounded-full"></div>
+              <div className="absolute top-[50%] left-[calc(50%-0.5rem)] w-1 h-[35%] bg-gradient-to-b from-purple-600 to-green-600 rounded-full"></div>
+              <div className="absolute top-[50%] left-[calc(83.33%-0.5rem)] w-1 h-[35%] bg-gradient-to-b from-purple-600 to-green-600 rounded-full"></div>
+            </div>
+              {[
+                {
+                  icon: Sparkles,
+                  title: "שיחה ראשונית",
+                  description: "נפגש, נבין את הצרכים שלך, נגדיר מטרות ונבנה אסטרטגיה מותאמת אישית לפרויקט שלך.",
+                  color: "blue",
+                  step: "1"
+                },
+                {
+                  icon: Palette,
+                  title: "עיצוב ופיתוח",
+                  description: "צוות המעצבים והמפתחים שלנו יבנה את האתר שלך עם הטכנולוגיות המתקדמות ביותר.",
+                  color: "purple",
+                  step: "2"
+                },
+                {
+                  icon: Cpu,
+                  title: "בדיקות ואופטימיזציה",
+                  description: "נבדוק כל פיקסל, נבטיח שהכל עובד מושלם ונבצע אופטימיזציה לביצועים הטובים ביותר.",
+                  color: "green",
+                  step: "3"
+                },
+                {
+                  icon: Database,
+                  title: "העלאה לחי",
+                  description: "נעלה את האתר לשרתים מהירים ואמינים עם תעודות SSL ואבטחה מתקדמת.",
+                  color: "orange",
+                  step: "4"
+                },
+                {
+                  icon: Cloud,
+                  title: "תמיכה מתמשכת",
+                  description: "נמשיך לתמוך בך גם אחרי ההשקה - עדכונים, תחזוקה ושיפורים מתמשכים.",
+                  color: "cyan",
+                  step: "5"
+                },
+                {
+                  icon: Shield,
+                  title: "צמיחה והרחבה",
+                  description: "נעזור לך לגדול ולהרחיב את האתר שלך עם תכונות חדשות ופונקציונליות מתקדמת.",
+                  color: "red",
+                  step: "6"
+                }
+              ].map((step, index) => (
+                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 relative bg-white">
+                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm z-10">
+                    {step.step}
                   </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
-                  <CardDescription className="text-base">{feature.description}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
+                  <CardHeader>
+                    <div className={`w-12 h-12 bg-${step.color}-100 dark:bg-${step.color}-900/20 rounded-lg flex items-center justify-center mb-4`}>
+                      <step.icon className={`h-6 w-6 text-${step.color}-600`} />
+                    </div>
+                    <CardTitle className="text-xl">{step.title}</CardTitle>
+                    <CardDescription className="text-base">{step.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              ))}
           </div>
         </div>
       </section>
@@ -222,7 +396,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-white">
+      <section id="clients" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">אהוב על ידי מפתחים ברחבי העולם</h2>
@@ -232,35 +406,41 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                name: "שרה צ'ן",
-                role: "מפתחת פרונט-אנד",
-                company: "טק-קורפ",
-                avatar: "ש״צ",
-                quote: "Webilan שינתה את האופן שבו אני בונה אתרים. תכונות הבינה המלאכותית מדהימות - אני יכולה ליצור אבות טיפוס תוך דקות במקום שעות.",
+                name: "דוד כהן",
+                role: "מנהל פרויקטים",
+                company: "סטארט-אפ ישראלי",
+                photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+                quote: "הצוות של Webilan בנה לנו אתר מקצועי תוך שבועיים. התקשורת הייתה מעולה והתוצאה מדהימה.",
                 rating: 5
               },
               {
-                name: "מרקוס רודריגז",
-                role: "מעצב פרילנסר",
-                company: "סטודיו עיצוב",
-                avatar: "מר",
-                quote: "התבניות יפות ואפשרויות ההתאמה אינסופיות. הלקוחות שלי אוהבים את התוצאות.",
+                name: "שרה לוי",
+                role: "בעלת עסק",
+                company: "בוטיק אופנה",
+                photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
+                quote: "האתר החדש הכפיל את המכירות שלנו. עיצוב מודרני וקל לשימוש - בדיוק מה שרציתי.",
                 rating: 5
               },
               {
-                name: "אמילי ווטסון",
-                role: "מייסדת סטארט-אפ",
-                company: "מעבדת חדשנות",
-                avatar: "או",
-                quote: "בנינו את כל ה-MVP שלנו בסוף שבוע אחד. הפריסה הייתה חלקה והביצועים יוצאי דופן.",
+                name: "מיכאל רוזן",
+                role: "מפתח עצמאי",
+                company: "פרילנסר",
+                photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
+                quote: "התבניות שלהם איכותיות והקוד נקי. חוסך לי שעות של עבודה על כל פרויקט.",
                 rating: 5
               }
             ].map((testimonial, index) => (
               <Card key={index} className="border-0 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold ml-4">
-                      {testimonial.avatar}
+                    <div className="w-12 h-12 rounded-full overflow-hidden ml-4">
+          <Image
+                        src={testimonial.photo} 
+                        alt={testimonial.name}
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div>
                       <h4 className="font-semibold">{testimonial.name}</h4>
@@ -293,66 +473,74 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
               {
-                name: "מתחיל",
-                price: "חינם",
-                description: "מושלם לפרויקטים אישיים ופורטפוליו",
+                name: "אתר תדמית התחלתי",
+                subtitle: "Starter Site",
+                price: "₪4,800",
+                period: "+ מע״מ",
+                description: "נקודת כניסה ללקוחות בתחילת הדרך, עם תקציב מוגדר",
                 features: [
-                  "עד 3 אתרים",
-                  "תבניות בסיסיות",
-                  "1GB אחסון",
-                  "תמיכה קהילתית",
-                  "תעודות SSL"
+                  "שיחת אפיון וייעוץ ראשונית",
+                  "עיצוב מבוסס תבנית פרימיום איכותית",
+                  "בניית אתר תדמית של עד 5 עמודים",
+                  "התאמה מלאה למובייל",
+                  "הטמעת תוכן ראשוני",
+                  "טופס יצירת קשר בסיסי",
+                  "הדרכה קצרה על תפעול האתר"
                 ],
-                button: "התחל חינם",
+                button: "התחל פרויקט",
                 popular: false
               },
               {
-                name: "מקצועי",
-                price: "₪99",
-                period: "/חודש",
-                description: "לעסקים מתפתחים ומפתחים",
+                name: "החבילה העסקית",
+                subtitle: "The Business Package",
+                price: "₪8,500",
+                period: "+ מע״מ",
+                description: "הפתרון המלא והמותאם אישית לרוב העסקים הקטנים והבינוניים",
                 features: [
-                  "אתרים ללא הגבלה",
-                  "תבניות פרימיום",
-                  "10GB אחסון",
-                  "תמיכה מועדפת",
-                  "דומיינים מותאמים",
-                  "לוח בקרה אנליטיקס",
-                  "תכונות מסחר אלקטרוני"
+                  "כל מה שבחבילת הבסיס",
+                  "תהליך אפיון מעמיק",
+                  "עיצוב ייחודי ומותאם אישית",
+                  "בניית אתר של עד 10 עמודים",
+                  "חיבור לכלים חיצוניים",
+                  "הקמת בלוג מקצועי",
+                  "הטמעה של כלי SEO בסיסיים"
                 ],
-                button: "התחל ניסיון חינם",
+                button: "התחל פרויקט",
                 popular: true
               },
               {
-                name: "ארגוני",
-                price: "מותאם",
-                description: "לצוותים גדולים וארגונים",
+                name: "פרימיום / חנות אונליין",
+                subtitle: "Premium / E-Commerce",
+                price: "צרו קשר",
+                description: "הפתרון לעסקים שרוצים למכור אונליין או צריכים פונקציונליות מורכבת",
                 features: [
-                  "כל מה שבמקצועי",
-                  "שיתוף פעולה בצוות",
-                  "אבטחה מתקדמת",
-                  "אינטגרציות מותאמות",
-                  "תמיכה ייעודית",
-                  "ערבות SLA",
-                  "אפשרויות מותאמות אישית"
+                  "כל מה שבחבילה העסקית",
+                  "אפיון, עיצוב והקמה של חנות אינטרנטית מלאה",
+                  "העלאת מוצרים ראשונית",
+                  "הגדרת קטגוריות, משלוחים, קופונים",
+                  "חיבור מאובטח לספקי סליקה",
+                  "הדרכה מלאה על ניהול החנות"
                 ],
-                button: "צור קשר מכירות",
+                button: "צור קשר להצעת מחיר",
                 popular: false
               }
             ].map((plan, index) => (
               <Card key={index} className={`border-0 ${plan.popular ? 'bg-gradient-to-br from-blue-600 to-purple-600 shadow-2xl scale-105' : 'bg-white/10 backdrop-blur-sm'}`}>
                 <CardHeader className="text-center">
-                  {plan.popular && (
-                    <div className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit mx-auto mb-4">
-                      הכי פופולרי
+                                      {plan.popular && (
+                      <div className="bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full w-fit mx-auto mb-4">
+                        ★ החבילה המומלצת ★
+                      </div>
+                    )}
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    {plan.subtitle && (
+                      <div className="text-sm text-slate-300 mt-1">{plan.subtitle}</div>
+                    )}
+                    <div className="flex items-baseline justify-center">
+                      <span className="text-4xl font-bold">{plan.price}</span>
+                      {plan.period && <span className="text-slate-300 mr-1">{plan.period}</span>}
                     </div>
-                  )}
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <div className="flex items-baseline justify-center">
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    {plan.period && <span className="text-slate-300 mr-1">{plan.period}</span>}
-                  </div>
-                  <CardDescription className="text-slate-300">{plan.description}</CardDescription>
+                    <CardDescription className="text-slate-300">{plan.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3 mb-8">
@@ -366,6 +554,10 @@ export default function Home() {
                   <Button 
                     className={`w-full ${plan.popular ? 'bg-white text-blue-600 hover:bg-slate-100' : 'bg-blue-600 hover:bg-blue-700'}`}
                     size="lg"
+                    onClick={() => {
+                      setSelectedPlan({ name: plan.name, price: plan.price });
+                      setIsWhatsAppDialogOpen(true);
+                    }}
                   >
                     {plan.button}
                   </Button>
@@ -434,14 +626,14 @@ export default function Home() {
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             הצטרף לאלפי מפתחים ויוצרים שכבר בונים אתרים מדהימים עם Webilan.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 bg-white text-blue-600 hover:bg-slate-100">
+          <div className="flex justify-center">
+            <Button 
+              size="lg" 
+              className="text-lg px-8 bg-white text-blue-600 hover:bg-slate-100"
+              onClick={() => setIsContactDialogOpen(true)}
+            >
               <Rocket className="h-5 w-5 ml-2" />
               התחל לבנות חינם
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 border-white text-white hover:bg-white hover:text-blue-600">
-              <Play className="h-5 w-5 ml-2" />
-              צפה בדמו
             </Button>
           </div>
         </div>
@@ -456,54 +648,71 @@ export default function Home() {
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Code className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold">Webilan</span>
+                <span className="text-xl font-bold">01Webilan</span>
               </div>
               <p className="text-slate-400 mb-4">
-                הפלטפורמה מבוססת הבינה המלאכותית שמשנה את הרעיונות שלך לאתרים יפים ופונקציונליים תוך דקות.
+                בניית אתרים מקצועיים ומותאמים אישית לעסקים קטנים ובינוניים. מהרעיון ועד לאתר חי.
               </p>
               <div className="flex space-x-4">
-                <Github className="h-5 w-5 text-slate-400 hover:text-white cursor-pointer" />
-                <ExternalLink className="h-5 w-5 text-slate-400 hover:text-white cursor-pointer" />
-                <Mail className="h-5 w-5 text-slate-400 hover:text-white cursor-pointer" />
+                <a href="https://wa.me/972529529613" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="h-5 w-5 text-slate-400 hover:text-white cursor-pointer" />
+                </a>
+                <a href="mailto:info@01webilan.com">
+                  <Mail className="h-5 w-5 text-slate-400 hover:text-white cursor-pointer" />
+                </a>
+                <a href="tel:+972529529613">
+                  <Phone className="h-5 w-5 text-slate-400 hover:text-white cursor-pointer" />
+                </a>
               </div>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">מוצר</h3>
+              <h3 className="font-semibold mb-4">שירותים</h3>
               <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">תכונות</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">תבניות</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">מחירים</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">ארגונים</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
+                <li><a href="#journey" className="hover:text-white transition-colors">תהליך העבודה</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">חבילות ומחירים</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">אתרי תדמית</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">חנויות אונליין</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">תחזוקה ותמיכה</a></li>
               </ul>
             </div>
             
             <div>
-              <h3 className="font-semibold mb-4">משאבים</h3>
+              <h3 className="font-semibold mb-4">לקוחות</h3>
               <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">תיעוד</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">מדריכים</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">קהילה</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">בלוג</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">תמיכה</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">חברה</h3>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="#" className="hover:text-white transition-colors">אודות</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">קריירה</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">פרויקטים לדוגמה</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">המלצות לקוחות</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">תהליך בניית האתר</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">שאלות נפוצות</a></li>
                 <li><a href="#" className="hover:text-white transition-colors">צור קשר</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">פרטיות</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">תנאים</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-4">צור קשר</h3>
+              <ul className="space-y-2 text-slate-400">
+                <li className="flex items-center">
+                  <Phone className="h-4 w-4 ml-2" />
+                  <a href="tel:+972529529613" className="hover:text-white transition-colors">+972-52-952-9613</a>
+                </li>
+                <li className="flex items-center">
+                  <Mail className="h-4 w-4 ml-2" />
+                  <a href="mailto:info@01webilan.com" className="hover:text-white transition-colors">info@01webilan.com</a>
+                </li>
+                <li className="flex items-center">
+                  <MapPin className="h-4 w-4 ml-2" />
+                  <span>ישראל</span>
+                </li>
+                <li className="flex items-center">
+                  <Clock className="h-4 w-4 ml-2" />
+                  <span>א'-ה' 9:00-18:00</span>
+                </li>
               </ul>
             </div>
           </div>
           
           <div className="border-t border-slate-800 pt-8 text-center text-slate-400">
-            <p>© 2024 Webilan. כל הזכויות שמורות. נבנה עם ❤️ למפתחים.</p>
+            <p>© 2024 01Webilan. כל הזכויות שמורות. בניית אתרים מקצועיים בישראל.</p>
           </div>
         </div>
       </footer>

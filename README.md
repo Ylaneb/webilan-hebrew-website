@@ -121,6 +121,26 @@ Create a `.env.local` file for local development:
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
+### Contact Form Email Setup
+
+The contact form automatically sends emails to `info@01webilan.com`. To enable this feature:
+
+1. **Sign up for Resend** (free tier available):
+   - Go to [resend.com](https://resend.com)
+   - Create an account and get your API key
+
+2. **Add your API key to environment variables**:
+   ```env
+   RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+   ```
+
+3. **For production deployment on Vercel**:
+   - Go to your Vercel project settings
+   - Add the `RESEND_API_KEY` environment variable
+   - Deploy your changes
+
+**Alternative email services**: You can also use SendGrid, Mailgun, or other email providers by modifying the `src/lib/emailService.ts` file.
+
 ## 📚 Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
