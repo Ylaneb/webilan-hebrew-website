@@ -7,15 +7,11 @@ import { X, MessageCircle, Send } from "lucide-react";
 interface WhatsAppDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  planName?: string;
-  planPrice?: string;
 }
 
 export default function WhatsAppDialog({
   isOpen,
-  onClose,
-  planName = "",
-  planPrice = ""
+  onClose
 }: WhatsAppDialogProps) {
   const [message, setMessage] = useState(
     `היי אילן - אפשר לקבל יותר פרטים לגבי בניית האתר שלי?`

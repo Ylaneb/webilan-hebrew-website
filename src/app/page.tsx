@@ -9,14 +9,11 @@ import {
   Code, 
   Palette, 
   Globe, 
-  Github, 
-  ExternalLink,
   ArrowRight,
   CheckCircle,
   Star,
   Shield,
   Sparkles,
-  Play,
   ChevronDown,
   Mail,
   Cpu,
@@ -35,7 +32,6 @@ export default function Home() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
   const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState({ name: "", price: "" });
   const [websiteDescription, setWebsiteDescription] = useState("");
 
   const handleInputSubmit = () => {
@@ -76,8 +72,6 @@ export default function Home() {
       <WhatsAppDialog
         isOpen={isWhatsAppDialogOpen}
         onClose={() => setIsWhatsAppDialogOpen(false)}
-        planName={selectedPlan.name}
-        planPrice={selectedPlan.price}
       />
 
       {/* Header */}
@@ -555,7 +549,6 @@ export default function Home() {
                     className={`w-full ${plan.popular ? 'bg-white text-blue-600 hover:bg-slate-100' : 'bg-blue-600 hover:bg-blue-700'}`}
                     size="lg"
                     onClick={() => {
-                      setSelectedPlan({ name: plan.name, price: plan.price });
                       setIsWhatsAppDialogOpen(true);
                     }}
                   >
@@ -705,7 +698,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-center">
                   <Clock className="h-4 w-4 ml-2" />
-                  <span>א'-ה' 9:00-18:00</span>
+                  <span>א&apos;-ה&apos; 9:00-18:00</span>
                 </li>
               </ul>
             </div>
