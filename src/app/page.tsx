@@ -42,10 +42,7 @@ export default function Home() {
               <a href="#pricing" className="text-slate-600 hover:text-blue-600 transition-colors">מחירים</a>
               <a href="#enterprise" className="text-slate-600 hover:text-blue-600 transition-colors">ארגונים</a>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                התחברות
-              </Button>
+            <div className="flex items-center">
               <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                 <Rocket className="h-4 w-4 ml-2" />
                 התחל לבנות
